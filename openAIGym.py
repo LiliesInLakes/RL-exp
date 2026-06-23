@@ -22,14 +22,19 @@ print(f"cart pos is:{cart_pos}")
 score=0
 done= False
 #this will make it do once right??
-while not done:
-    action= env.action_space.sample()
-    observation, reward, terminate, truncate, info2= env.step(action)
-    # action is done. need to check obs and if term or not and reward!!
-    score += reward
-    #need to input reward also
-    done = terminate or truncate
-print(f"episode is done reward is {score}")
+for i in range(0, episodes):
+    env.reset()
+    done= False
+    score= 0
+    while not done:
+        action= env.action_space.sample()
+        # print(f"action is{action}")
+        observation, reward, terminate, truncate, info2= env.step(action)
+        # action is done. need to check obs and if term or not and reward!!
+        score += reward
+        #need to input reward also
+        done = terminate or truncate
+    print(f"episode {i} is done reward is {score}")
 env.close()
 
 
