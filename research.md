@@ -16,3 +16,4 @@ Wrappers:**ClipAction(env)**: Clips any action passed to step to ensure it’s w
         **RescaleAction**: Rescales actions to a different range (useful for algorithms that output actions in [-1, 1] but environment expects [0, 10]).
         **TimeAwareObservation**: Adds information about the current timestep to the observation (sometimes helps with learning). 
     We can also unwrap envs
+**Boltzmann Q Policy**: softmax on probability of choosing action, 𝑃(𝑎)=exp(𝑄(𝑠,𝑎)÷𝜏)∑𝑎′exp(𝑄(𝑠,𝑎′)÷𝜏)
