@@ -1,7 +1,7 @@
 import gymnasium as gym
-import torch
-from torch import nn
-import torch.optim as optim
+# import pytorch as torch
+import numpy as np
+import random
 env= gym.make("CartPole-v1", render_mode= "human")
 episodes= 10
 observation, info= env.reset()
@@ -12,45 +12,40 @@ print(f"cart pos is:{cart_pos}")
 
 score=0
 done= False
+weights= [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1)]
+print(weights)
+best_score=0
+print(f"actions are {env.action_space}")
+#this will make it do once right??
+for i in range(0, episodes):
+    env.reset()
+    done= False
+    score= 0
+    rewardlist= []
+    noise= [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1)]
+    new_weights= [None] * 4
+    for j in range(0, 4):
+        new_weights[j]= noise[j]+ weights[j]
+    while not done:
 
-class SeqMod(nn.Module):
-    def __init__(self):
-        super().__init__()
-        self.flatten = nn.Flatten()
-        self.linear_relu_stack = nn.Sequential(
-            nn.Linear(28*28, 512),
-            nn.ReLU(),
-            nn.Linear(512, 512),
-            nn.ReLU(),
-            nn.Linear(512, 10)
-        )
+        dp= np.dot(new_weights, observation)
+        action= 0 if dp < 0 else 1
 
-    def forward(self, x):
-        x = self.flatten(x)
-        logits = self.linear_relu_stack(x)
-        return logits
-
-policy = SeqMod()
-print(policy)
-optimizer = optim.Adam(policy.parameters(), lr=1e-2)
-
-def train(env, policy, optimizer, episodes):
-    for i in range(0, episodes):
-        env.reset()
-        done= False
-        score= 0
-        while not done:
-            action= env.action_space.sample()
-            print(f"action is{action}")
-            observation, reward, terminate, truncate, info2= env.step(action)
-            # action is done. need to check obs and if term or not and reward!!
-            score += reward
-            #need to input reward also
-            done = terminate or truncate
-        if done: 
-            
-        print(f"episode {i} is done reward is {score}")
+        # print(f"action is{action}")
+        observation, reward, terminate, truncate, info2= env.step(action)
+        # action is done. need to check obs and if term or not and reward!!
+        # print(f"reward is{reward}")
+        # print(f"obs is{observation}")
+        rewardlist.append(reward)
+        score += reward
+        #need to input reward also
+        done = terminate or truncate
+    if score> best_score:
+        best_score=score
+        for k in range(0, 4):
+            new_weights[k]= noise[k]+ weights[k]
+        print(f"--> New best score found! Saving these weights.\n")
+    print(f"episode {i} is done reward is {score}")
 env.close()
-
 
 
