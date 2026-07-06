@@ -26,10 +26,10 @@ for i in range(0, episodes):
     new_weights= [None] * 4
     for j in range(0, 4):
         new_weights[j]= noise[j]+ weights[j]
-    while not done:
+    while not done: #agent
 
         dp= np.dot(new_weights, observation)
-        action= 0 if dp < 0 else 1
+        action= 0 if dp < 0 else 1 #policy
 
         # print(f"action is{action}")
         observation, reward, terminate, truncate, info2= env.step(action)
@@ -49,3 +49,7 @@ for i in range(0, episodes):
 env.close()
 
 
+# Thoughts on rlcart.py
+
+# it is deterministic and rigidly linear. So it cant handle complexities of the enironment and act on them. It has no idea of why the new weights are better
+# If i had used a ai model instead, i would get probabilites instead of a hard 0 and 1. that could handle the complexities
