@@ -3,7 +3,7 @@ import gymnasium as gym
 import numpy as np
 import random
 env= gym.make("CartPole-v1", render_mode= "human")
-episodes= 10
+episodes= 20
 observation, info= env.reset()
 print(f"observations are:{observation}")
 cart_pos, cart_vel, pole_angle, pole_w= observation
@@ -12,7 +12,8 @@ print(f"cart pos is:{cart_pos}")
 
 score=0
 done= False
-
+learning_rate= 0.1
+#actually lr doesnt have much point here.
 weights= [random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1), random.uniform(-1, 1)]
 print(weights)
 best_score=0
@@ -44,7 +45,7 @@ for i in range(0, episodes):
     if score> best_score:
         best_score=score
         for k in range(0, 4):
-            new_weights[k]= noise[k]+ weights[k]
+            new_weights[k]= learning_rate*(noise[k]+ weights[k])
         print(f"--> New best score found! Saving these weights.\n")
     print(f"episode {i} is done reward is {score}")
 env.close()
