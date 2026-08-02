@@ -2,7 +2,6 @@ import gymnasium as gym
 import torch
 import torch.nn as nn
 import numpy as np
-import random
 from torch.distributions import Categorical
 import torch.optim as optim
 import numpy as np
@@ -44,13 +43,14 @@ for i in range(0, episodes):
         output= model(input_tensor)
         dist= Categorical(logits= output)
         action= dist.sample()
-        log_probs.append(dist.log_prob(action))
+        # print(f"action is:{action}")
+        step_log=dist.log_prob(action)
+        log_probs.append(step_log)
         observation, reward, terminate, truncate, info2 = env.step(action.item())
         rewardlist.append(reward)
         score += reward
         done = terminate or truncate
-    for log_prob in log_probs:
-        policy_loss.append(-log_prob* score)
+        policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
     total_rewards.append(score)
     optimizer.zero_grad()
     loss= torch.stack(policy_loss).sum()
