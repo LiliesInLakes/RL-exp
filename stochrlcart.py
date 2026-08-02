@@ -1,5 +1,5 @@
 import gymnasium as gym
-# import pytorch as torch
+import pytorch as torch
 import numpy as np
 import random
 env= gym.make("CartPole-v1", render_mode= "human")
