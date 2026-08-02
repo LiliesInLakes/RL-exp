@@ -18,3 +18,4 @@ Wrappers:**ClipAction(env)**: Clips any action passed to step to ensure it’s w
     We can also unwrap envs
 **Boltzmann Q Policy**: softmax on probability of choosing action, 𝑃(𝑎)=exp(𝑄(𝑠,𝑎)÷𝜏)∑𝑎′exp(𝑄(𝑠,𝑎′)÷𝜏)
 **Multi Layer Perceptron**: has input layer, hidden layer and output layer. learning way fwd prop and back prop. error calc. 
+**.sample**:Helps rl do both exploration and exploitation. makes choosing action stochastic 
