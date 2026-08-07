@@ -29,6 +29,7 @@ score=0
 done= False
 learning_rate= 0.1
 best_score=0
+gamma = 0.99
 print(f"actions are {env.action_space}")
 total_rewards= []
 for i in range(0, episodes):
@@ -47,10 +48,28 @@ for i in range(0, episodes):
         step_log=dist.log_prob(action)
         log_probs.append(step_log)
         observation, reward, terminate, truncate, info2 = env.step(action.item())
-        rewardlist.append(reward)
-        score += reward
+        # rewardlist.append(reward)
+        score = reward + gamma*score
+        rewardlist.append(score)
         done = terminate or truncate
-        policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
+        # policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
+    #cant do this cuz all the step wise rewards are +1 so mean =1 only
+    # mean=0
+    # deviation=0
+    # count=0
+    # meansquare=0
+    # for a in rewardlist:
+    #     mean+=a
+    #     meansquare+= a**2
+    #     count+=1
+    # mean=mean/count
+    # meansquare= meansquare/count
+    # deviation= sqrt(meansquare- mean**2)
+    # for step_reward, a in zip(rewardlist, log_probs):
+    #     policy_loss.append(-a*((step_reward-mean)/deviation))
+    for step_reward, a in zip(rewardlist, log_probs):
+       policy_loss.append(-a*step_reward)
+    
     total_rewards.append(score)
     optimizer.zero_grad()
     loss= torch.stack(policy_loss).sum()
