@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 env= gym.make("CartPole-v1", render_mode= "human")
-episodes= 100
+episodes= 1000
 observation, info= env.reset()
 print(f"observations are:{observation}")
 cart_pos, cart_vel, pole_angle, pole_w= observation
@@ -24,10 +24,10 @@ model= nn.Sequential(
     nn.Linear(16,2)
 
 )
-optimizer = optim.Adam(model.parameters(), lr=0.01)
+learning_rate= 0.001
+optimizer = optim.Adam(model.parameters(), learning_rate)
 score=0
 done= False
-learning_rate= 0.1
 best_score=0
 gamma = 0.99
 print(f"actions are {env.action_space}")
