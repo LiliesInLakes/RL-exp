@@ -6,8 +6,8 @@ from torch.distributions import Categorical
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
-
-env= gym.make("CartPole-v1", render_mode= "human")
+render_mode= None
+env= gym.make("CartPole-v1", render_mode= render_mode)
 episodes= 1000
 observation, info= env.reset()
 print(f"observations are:{observation}")
@@ -36,6 +36,12 @@ total_rewards= []
 total_disc= []
 total_probs = []
 for i in range(0, episodes):
+    should_render= (i%100==0)
+    desired_render_mode= "human" if should_render else None
+    if desired_render_mode!=render_mode:
+        env.close()
+        render_mode= desired_render_mode
+        env= gym.make("CartPole-v1", render_mode= render_mode)
     observation, _ = env.reset()
     done= False
     score= 0
