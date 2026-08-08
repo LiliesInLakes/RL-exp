@@ -49,8 +49,8 @@ for i in range(0, episodes):
         log_probs.append(step_log)
         observation, reward, terminate, truncate, info2 = env.step(action.item())
         # rewardlist.append(reward)
-        score = reward + gamma*score
-        rewardlist.append(score)
+        score += reward
+        rewardlist.append(reward)
         done = terminate or truncate
         # policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
     #cant do this cuz all the step wise rewards are +1 so mean =1 only
@@ -67,7 +67,12 @@ for i in range(0, episodes):
     # deviation= sqrt(meansquare- mean**2)
     # for step_reward, a in zip(rewardlist, log_probs):
     #     policy_loss.append(-a*((step_reward-mean)/deviation))
-    for step_reward, a in zip(rewardlist, log_probs):
+    discounted_list= []
+    g=0
+    for r in reversed(rewardlist):
+        g= r+ gamma*g
+        discounted_list.insert(0, g)
+    for step_reward, a in zip(discounted_list, log_probs):
        policy_loss.append(-a*step_reward)
     
     total_rewards.append(score)
