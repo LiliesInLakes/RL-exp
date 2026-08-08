@@ -37,7 +37,7 @@ total_rewards= []
 total_disc= []
 total_probs = []
 for i in range(0, episodes):
-    should_render= (i%200==0)
+    should_render= ((i+1)%200==0)
     desired_render_mode= "human" if should_render else None
     if desired_render_mode!=render_mode:
         env.close()
