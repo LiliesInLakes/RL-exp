@@ -8,7 +8,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 render_mode= None
 env= gym.make("LunarLander-v3", render_mode= render_mode)
-episodes= 2000
+episodes= 4000
 observation, info= env.reset()
 print(f"observations are:{observation}")
 # cart_pos, cart_vel, pole_angle, pole_w= observation
@@ -83,7 +83,7 @@ for i in range(0, episodes):
         total_disc= []
         total_probs = []
 
-    print(f"episode {i} is done reward is {score}")
+        print(f"episode {i} is done reward is {score}")
             # policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
     #cant do this cuz all the step wise rewards are +1 so mean =1 only
     # mean=0
