@@ -6,9 +6,20 @@ from torch.distributions import Categorical
 import torch.optim as optim
 import numpy as np
 import matplotlib.pyplot as plt
+from gymnasium.wrappers import RecordVideo
+
+# from gymnasium.wrappers.monitoring import video_recorder
+
+
 render_mode= None
-env= gym.make("LunarLander-v3", render_mode= render_mode)
+env= gym.make("LunarLander-v3", render_mode= "rgb_array")
 episodes= 4000
+
+env = RecordVideo(
+    env, 
+    video_folder="gym_videos", 
+    episode_trigger=lambda episode_id: episode_id % 400 == 0
+)
 observation, info= env.reset()
 print(f"observations are:{observation}")
 # cart_pos, cart_vel, pole_angle, pole_w= observation
@@ -37,12 +48,12 @@ total_rewards= []
 total_disc= []
 total_probs = []
 for i in range(0, episodes):
-    should_render= ((i+1)%200==0)
-    desired_render_mode= "human" if should_render else None
-    if desired_render_mode!=render_mode:
-        env.close()
-        render_mode= desired_render_mode
-        env= gym.make("LunarLander-v3", render_mode= render_mode)
+    # should_render= ((i+1)%200==0)
+    # desired_render_mode= "human" if should_render else None
+    # if desired_render_mode!=render_mode:
+    #     env.close()
+    #     render_mode= desired_render_mode
+    #     env= gym.make("LunarLander-v3", render_mode= render_mode)
     observation, _ = env.reset()
     done= False
     score= 0
@@ -69,21 +80,20 @@ for i in range(0, episodes):
     total_disc.extend(discounted_list) #appending only the final discounted reward and last step_log
     total_probs.extend(log_probs)
    
-    if (i+1) % batch_size == 0:
-        policy_loss= []
-        disc_reward_tensor= torch.tensor(total_disc, dtype= torch.float32)
-        disc_reward_tensor= (disc_reward_tensor- disc_reward_tensor.mean())/ (disc_reward_tensor.std()+ 1e-8)
-        for step_reward, log_prob in zip(disc_reward_tensor, total_probs):
-            policy_loss.append(-log_prob*step_reward)
+    policy_loss= []
+    disc_reward_tensor= torch.tensor(total_disc, dtype= torch.float32)
+    disc_reward_tensor= (disc_reward_tensor- disc_reward_tensor.mean())/ (disc_reward_tensor.std()+ 1e-8)
+    for step_reward, log_prob in zip(disc_reward_tensor, total_probs):
+        policy_loss.append(-log_prob*step_reward)
 
-        optimizer.zero_grad()
-        loss= torch.stack(policy_loss).sum()
-        loss.backward()
-        optimizer.step()
-        total_disc= []
-        total_probs = []
+    optimizer.zero_grad()
+    loss= torch.stack(policy_loss).sum()
+    loss.backward()
+    optimizer.step()
+    total_disc= []
+    total_probs = []
 
-        print(f"episode {i} is done reward is {score}")
+    print(f"episode {i} is done reward is {score}")
             # policy_loss.append(-step_log* reward) #torch is for gradient descent and we want ascent. so - sign
     #cant do this cuz all the step wise rewards are +1 so mean =1 only
     # mean=0
