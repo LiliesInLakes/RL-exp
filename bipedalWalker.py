@@ -26,7 +26,7 @@ print(f"observations are:{observation}")
 # cart_pos, cart_vel, pole_angle, pole_w= observation
 
 state_dim = env.observation_space.shape[0] 
-action_dim = env.action_space.n
+action_dim = env.action_space.shape[0]
 
 
 model= PPO("MlpPolicy", env, verbose=1)
